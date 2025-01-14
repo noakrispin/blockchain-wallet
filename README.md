@@ -21,8 +21,8 @@ A React-based multi-currency HD wallet built with Vite and Tailwind CSS. This ap
 ## Installation
 
 1. Clone the repository:
-   git clone https://github.com/<your-username>/<your-repository>.git
-   cd <your-repository>
+    git clone https://github.com/noakr/blockchain-wallet.git
+    cd blockchain-wallet
 2. Install dependencies:
     npm install
 3. Start the development server:
@@ -40,3 +40,6 @@ A React-based multi-currency HD wallet built with Vite and Tailwind CSS. This ap
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Live Demo
+Check out the live version of the application: [Live Demo](https://blockchain-esu7r19fy-noa-krispins-projects.vercel.app)
