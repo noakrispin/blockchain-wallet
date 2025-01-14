@@ -18,9 +18,19 @@ const reducer = (state, action) => {
     case 'SET_WALLET':
       return { ...state, wallet: action.param };
     case 'SET_VIEW':
+      // Handle navigation based on view type
+      if (action.param === 'home') {
+        // Don't clear wallet when just going back
+        return { ...state, view: action.param };
+      }
       return { ...state, view: action.param };
     case 'EXIT':
+      // Clear localStorage and reset state when exiting
+      localStorage.removeItem('wallet');
       return initialState;
+    case 'BACK':
+      // Handle back navigation without clearing wallet
+      return { ...state, view: action.param || 'home' };
     default:
       return state;
   }

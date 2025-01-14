@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { FolderOpen, Home, LogOut, Eye, EyeOff } from 'lucide-react';
+import { ethers } from 'ethers';
 import Context from '../../utils/context';
 import * as storage from '../../utils/storage';
 import { Button } from '../shared/Button';
@@ -30,21 +31,29 @@ export function OpenWallet() {
     setIsLoading(true);
   
     try {
-      const wallet = storage.loadWallet(formData.walletName, formData.password);
+      const wallet = storage.loadWallet(formData.walletName);
   
       if (!wallet) {
         throw new Error('Wallet not found');
       }
-  
-      dispatch({ type: 'SET_WALLET', param: wallet });
-      dispatch({ type: 'SET_VIEW', param: 'dashboard' });
+
+      try {
+        // Verify the password by attempting to decrypt the wallet
+        await ethers.Wallet.fromEncryptedJson(wallet.encryptedWallet, formData.password);
+        
+        // If we get here, the password was correct
+        dispatch({ type: 'SET_WALLET', param: wallet });
+        dispatch({ type: 'SET_VIEW', param: 'dashboard' });
+      } catch (decryptError) {
+        setError('Incorrect password. Please try again.');
+      }
     } catch (err) {
       if (err.message === 'Invalid wallet structure') {
         setError('The selected wallet is corrupted or invalid. Please restore or create a new wallet.');
-      } else if (err.message === 'Invalid password') {
-        setError('Incorrect password. Please try again.');
+      } else if (err.message === 'Wallet not found') {
+        setError('No wallet found with this name. Please check the name and try again.');
       } else {
-        setError(err.message);
+        setError('An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsLoading(false);
@@ -132,14 +141,17 @@ export function OpenWallet() {
               variant="default"
               loading={isLoading}
               disabled={!formData.walletName || !formData.password}
-              className="w-full"
+              className="w-auto px-8 py-3 rounded-[2rem] bg-green-500/80 hover:bg-green-600/90 text-white"
             />
 
             <div className="w-full flex items-center gap-4 pt-4 mt-4 border-t border-gray-200">
               <Button 
                 text="Back"
                 icon={Home}
-                onClick={() => dispatch({ type: 'SET_VIEW', param: 'home' })}
+                onClick={(e) => {
+                  e.preventDefault();
+                  dispatch({ type: 'BACK', param: 'home' });
+                }}
                 variant="outline"
                 size="small"
                 className="flex-1 px-4 py-2 text-gray-600 hover:text-gray-800 border-gray-300 hover:border-gray-400 rounded-lg"
@@ -147,7 +159,10 @@ export function OpenWallet() {
               <Button 
                 text="Exit"
                 icon={LogOut}
-                onClick={() => dispatch({ type: 'EXIT' })}
+                onClick={(e) => {
+                  e.preventDefault();
+                  dispatch({ type: 'EXIT' });
+                }}
                 variant="outline"
                 size="small"
                 className="flex-1 px-4 py-2 text-red-500 hover:text-red-600 border-red-200 hover:border-red-300 rounded-lg"
