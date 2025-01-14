@@ -33,32 +33,32 @@ async function getCryptoPrices() {
     }
 
     console.log('Fetching crypto prices...');
-    const baseUrl = import.meta.env.PROD 
-      ? 'https://blockchain-eosin.vercel.app'
-      : '';
     
-    const response = await fetch(`${baseUrl}/api/prices`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
+    // Use CoinGecko API directly
+    const response = await fetch(
+      'https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin&vs_currencies=usd&include_24h_change=true',
+      {
+        headers: {
+          'Accept': 'application/json',
+        }
       }
-    });
+    );
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`Price API response not ok: ${response.status}`);
     }
     
     const data = await response.json();
 
-    // Transform and cache the data
+    // Transform the data
     const prices = {
       ethereum: {
-        price: data[0]?.current_price || 0,
-        priceChange: data[0]?.price_change_percentage_24h || 0
+        price: data.ethereum?.usd || 0,
+        priceChange: data.ethereum?.usd_24h_change || 0
       },
       bitcoin: {
-        price: data[1]?.current_price || 0,
-        priceChange: data[1]?.price_change_percentage_24h || 0
+        price: data.bitcoin?.usd || 0,
+        priceChange: data.bitcoin?.usd_24h_change || 0
       }
     };
 
@@ -70,7 +70,6 @@ async function getCryptoPrices() {
     return prices;
   } catch (error) {
     console.error('Error fetching crypto prices:', error);
-    // Return cached data if available, otherwise return default values
     return priceCache.data || {
       ethereum: { price: 0, priceChange: 0 },
       bitcoin: { price: 0, priceChange: 0 }
@@ -189,4 +188,9 @@ export async function estimateGas(toAddress, amount) {
     throw new Error('Failed to estimate gas');
   }
 }
+
+export {
+  getCryptoPrices,
+  getEthereumProvider
+};
 
