@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap');
+
+* {
+  font-family: "Rubik", sans-serif !important;
+}
+
+/* Keep only custom utility classes that don't conflict with Tailwind */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+

@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-sans bg-gray-50 text-gray-800;
+}
+
+/* Custom Animation Classes */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-5px);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 3s infinite;
+}
+
+.animate-spin {
+  animation: spin 5s linear infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
