@@ -163,7 +163,10 @@ export function CreateWallet() {
                 <Button 
                   text="Back"
                   icon={Home}
-                  onClick={() => dispatch({ type: 'SET_VIEW', param: 'home' })}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch({ type: 'BACK', param: 'home' });
+                  }}
                   variant="outline"
                   size="small"
                   className="flex-1 px-4 py-2 text-gray-600 hover:text-gray-800 border-gray-300 hover:border-gray-400 rounded-lg"

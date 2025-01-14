@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
 import { loadWallet } from './storage';
 
-const INFURA_API_KEY = "ade1e691b692472a9e00d33c9efa703c";
-
 const getEthereumProvider = () => {
+  const INFURA_API_KEY = import.meta.env.VITE_INFURA_API_KEY;
+  
   if (!INFURA_API_KEY) {
     throw new Error('Infura API key is not configured');
   }
@@ -16,10 +16,28 @@ const getEthereumProvider = () => {
   }
 };
 
+// Cache mechanism to store prices
+let priceCache = {
+  data: null,
+  timestamp: 0
+};
+
+const CACHE_DURATION = 60000; // 1 minute cache
+
 async function getCryptoPrices() {
   try {
+    // Check cache first
+    const now = Date.now();
+    if (priceCache.data && (now - priceCache.timestamp) < CACHE_DURATION) {
+      return priceCache.data;
+    }
+
     console.log('Fetching crypto prices...');
-    const response = await fetch('/api/prices', {
+    const baseUrl = import.meta.env.PROD 
+      ? 'https://blockchain-eosin.vercel.app'
+      : '';
+    
+    const response = await fetch(`${baseUrl}/api/prices`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -27,36 +45,33 @@ async function getCryptoPrices() {
     });
     
     if (!response.ok) {
-      console.error('Price API response not ok:', response.status, response.statusText);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const data = await response.json();
-    console.log('Raw API response:', data);
 
-    if (!Array.isArray(data)) {
-      console.error('Expected array response, got:', typeof data);
-      throw new Error('Invalid response format from price API');
-    }
-
-    // Convert array response to our expected format
-    const prices = {};
-    data.forEach(coin => {
-      prices[coin.id] = {
-        price: coin.current_price || 0,
-        priceChange: coin.price_change_percentage_24h || 0
-      };
-    });
-
-    console.log('Processed price data:', prices);
-
-    return {
-      ethereum: prices.ethereum || { price: 0, priceChange: 0 },
-      bitcoin: prices.bitcoin || { price: 0, priceChange: 0 }
+    // Transform and cache the data
+    const prices = {
+      ethereum: {
+        price: data[0]?.current_price || 0,
+        priceChange: data[0]?.price_change_percentage_24h || 0
+      },
+      bitcoin: {
+        price: data[1]?.current_price || 0,
+        priceChange: data[1]?.price_change_percentage_24h || 0
+      }
     };
+
+    priceCache = {
+      data: prices,
+      timestamp: now
+    };
+
+    return prices;
   } catch (error) {
     console.error('Error fetching crypto prices:', error);
-    return {
+    // Return cached data if available, otherwise return default values
+    return priceCache.data || {
       ethereum: { price: 0, priceChange: 0 },
       bitcoin: { price: 0, priceChange: 0 }
     };
