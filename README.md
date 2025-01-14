@@ -1,8 +1,42 @@
-# React + Vite
+# Blockchain Multi-Currency HD Wallet
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based multi-currency HD wallet built with Vite and Tailwind CSS. This application supports Bitcoin and Ethereum, allowing users to create, restore, and manage wallets, check balances, and send signed transactions. It leverages shared node APIs like [Infura](https://infura.io/) and [NowNodes](https://nownodes.io/) for blockchain interactions.
 
-Currently, two official plugins are available:
+## Features
+- Create new HD wallets with mnemonic phrases.
+- Restore existing wallets using recovery phrases.
+- View balances for supported currencies (Bitcoin, Ethereum).
+- Send signed transactions.
+- Responsive and modern UI with Tailwind CSS.
+- QR code support for transaction details.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Technologies Used
+- **Frontend Framework**: React
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **Icons**: React Icons, Lucide Icons
+- **Blockchain APIs**: Infura, NowNodes
+- **QR Code Generation**: qrcode.react
+
+## Installation
+
+1. Clone the repository:
+   git clone https://github.com/<your-username>/<your-repository>.git
+   cd <your-repository>
+2. Install dependencies:
+    npm install
+3. Start the development server:
+    npm run dev
+4. Open the application in your browser:
+    http://localhost:3000
+
+
+## Usage
+- Create a Wallet: Click the "Create New Wallet" button on the home screen to generate a new wallet.
+- Restore a Wallet: Use the "Restore Wallet" option to recover an existing wallet using a mnemonic phrase.
+- Open an Existing Wallet: Load a previously created wallet and view its details.
+- Check Balances: View current balances of Bitcoin and Ethereum wallets.
+- Send Transactions: Send cryptocurrency to other addresses securely.
+
+## License
+This project is licensed under the MIT License. See the LICENSE file for details.
